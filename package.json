@@ -1,0 +1,14 @@
+{
+  "name": "mix-fish",
+  "version": "1.0.0",
+  "description": "cs132 final project prototype of mix.fish -- a music utility to share playlists with friends",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "@abuaita",
+  "license": "MIT",
+  "dependencies": {
+    "spotify-web-api-node": "^2.5.0"
+  }
+}
