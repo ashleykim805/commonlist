@@ -32,7 +32,7 @@
   //login page
   app.get('/login', function(request, response){
       console.log('- Request received:');
-      response.sendFile('./login.html', {"root": __dirname});
+      response.sendFile('./home.html', {"root": __dirname});
   });
   //logout redirect to login
   app.get('/logout', function(request, response){

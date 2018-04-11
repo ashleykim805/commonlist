@@ -1,8 +1,45 @@
-body{
-	font-size: 14px;
-	font-family: 'Roboto';
-	background-color: #FAFAFA;
-	color: #000;
-	margin: 0 auto;
-	text-align: center;
-}
+
+body {
+      background: #000;
+      color: #fff;
+      font-family: basic-sans, sans-serif;
+      font-style: normal;
+      font-weight: 200;
+    }
+    
+    .container {
+      width: 1000px;
+      margin: 0 auto;
+    }
+    
+    #title img{
+      width: 600px;
+      padding: 50px;
+    }
+    #subtitle{
+      font-family: basic-sans, sans-serif;
+      transform: skew(-6deg);
+      font-weight: 900;
+      text-transform: Uppercase;
+      font-size: 45px;
+      margin-left: 50px;
+      width: 700px;
+      margin-top: -20px;
+
+    }
+    
+    #butt {
+      font-family: basic-sans, sans-serif;
+      font-size: 20px;
+      border: 1px solid white;
+      background-color: black;
+      color: white;
+      border-radius: 20px;
+      margin-left: 50px;
+      margin-top: 20px;
+    }
+    
+    #swirly img{
+      width: 100vw;
+      position: fixed;
+    }
