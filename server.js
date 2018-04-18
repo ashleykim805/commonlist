@@ -26,13 +26,19 @@
   //redirect to login page upon load
   app.get('/', function(request, response){
       console.log('- Request received:');
-      response.redirect('/login');
+      response.redirect('/home');
+  });
+
+  //login page
+  app.get('/home', function(request, response){
+      console.log('- Request received:');
+      response.sendFile('./home.html', {"root": __dirname});
   });
 
   //login page
   app.get('/login', function(request, response){
       console.log('- Request received:');
-      response.sendFile('./home.html', {"root": __dirname});
+      response.sendFile('./login.html', {"root": __dirname});
   });
   //logout redirect to login
   app.get('/logout', function(request, response){
