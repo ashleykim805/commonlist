@@ -2,21 +2,21 @@
   "name": "commonlist",
   "author": "@abuaita",
   "version": "1.0.0",
-  "description": "lab4cs132",
-  "main": "server.js",
-  "homepage": "http://abuaita.github.io/mix-fish",
   "description": "cs132 final project prototype of commonlist -- a music utility to share playlists with friends",
+  "main": "server.js",
+  "repository": "https://github.com/abuaita/commonlist",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "express-handlebars": "^3.0.0",
     "gh-pages": "^1.1.0",
+    "querystring": "^0.2.0",
+    "request": "^2.85.0",
     "spotify-web-api-node": "^2.5.0"
   }
 }
