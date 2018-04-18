@@ -7,12 +7,25 @@
 </head>
 <body>
   <div class="container">
+    <div id="title"><img src="./assorted/commonlist4pt.png" /></div>
+    <div id="user_inputs">
+      create an account:
+      <form method="post" action="/new_profile">
+        Email: <input type="text" name="new_email"> <br>
+        Username: <input type="text" name="new_user"> <br>
+        Password: <input type="password" name="new_pw1"> <br>
+        Confirm Password: <input type="password" name="new_pw2"> <br>
+        <button type="submit"> Sign Up </button>
+      </form>
+      <form method="post" action="/returning_profile">
+        Username: <input type="text" name="user"> <br>
+        Password: <input type="password" name="ret_pw1"> <br>
+        <button type="submit"> Log In </button>
+      </form>
 
-  <div id="title"><img src="./assorted/commonlist4pt.png" /></div>
-
-  	Login Screen
     </div>
+  </div>
   <div id="swirly"><img src="./assorted/album-sine-wave.jpg" id="swirly_image" /></div>
 
-  </body>
+</body>
 </html>

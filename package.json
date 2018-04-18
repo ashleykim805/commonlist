@@ -4,27 +4,32 @@
   "version": "1.0.0",
   "description": "cs132 final project prototype of commonlist -- a music utility to share playlists with friends",
   "main": "server.js",
-  "repository": "https://github.com/abuaita/commonlist",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abuaita/commonlist.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "license": "ISC",
   "dependencies": {
+    "async": "^2.6.0",
     "body-parser": "^1.18.2",
+    "crypto": "^1.0.1",
     "express": "^4.16.2",
     "express-handlebars": "^3.0.0",
     "gh-pages": "^1.1.0",
+    "jsonwebtoken": "^8.2.1",
+    "mongoose": "^5.0.15",
+    "mongoose-unique-validator": "^2.0.0",
     "querystring": "^0.2.0",
     "request": "^2.85.0",
     "spotify-web-api-node": "^2.5.0"
   },
   "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/abuaita/commonlist.git"
-  },
   "bugs": {
     "url": "https://github.com/abuaita/commonlist/issues"
-  }
+  },
+  "homepage": "https://github.com/abuaita/commonlist#readme"
 }
