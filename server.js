@@ -29,10 +29,12 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 //use handlebars to display
 app.set('views', __dirname);
 app.set('view engine', 'html');
-app.engine('html', handlebars({
-  defaultLayout: 'home',
-  extname: '.html'
-}));
+app.engine('html', handlebars(
+//   {
+//   defaultLayout: 'home',
+//   extname: '.html'
+// }
+));
 app.use(express.static(__dirname)); // directory
 
 //SOURCE CITED:
@@ -119,7 +121,7 @@ app.get('/home', function(request, response){
 //login page
 app.get('/login', function(request, response){
   console.log('-- Request received:', request.method, request.url);
-  response.sendFile('./login.html', {"root": __dirname});
+  response.render('./login.html', {"root": __dirname});
 });
 //profile page
 app.post('/new_profile', function(request, response){
@@ -133,8 +135,7 @@ app.post('/returning_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //var request = request.body;
   //TODO - access their data + validate w/ database
-  authenticateUser(request);
-  response.sendFile('./profile.html', {"root": __dirname});
+  authenticateUser(request, response);
 });
 //importing spotify data:
 app.get('/spotify_import', function(request, response){
@@ -213,8 +214,15 @@ app.get('/import_playlists', function(request, response){
   console.log('-- Request received:');
 
   // Get a user's playlists
-  spotifyApi.getUserPlaylists(spotifyID)
+  // spotifyApi.getUserPlaylists(spotifyID)
+  // .then(function(data) {
+  //   console.log('Retrieved playlists', data.body);
+  // },function(err) {
+  //   console.log('Something went wrong!', err);
+  // });
+  spotifyApi.getMySavedTracks(spotifyID)
   .then(function(data) {
+    console.log(data);
     console.log('Retrieved playlists', data.body);
   },function(err) {
     console.log('Something went wrong!', err);
@@ -275,14 +283,21 @@ function saveUser(request) {
   });
 }
 
-function authenticateUser(request) {
+function authenticateUser(request, response) {
   var info = request.body;
-  User.findOne({username:'akim52'}, function (err, user) {
+  User.findOne({username:info.user}, function (err, user) {
+    if (user === null) {
+      response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
+      console.log("password doesnt match");
+    } else {
     if (err) return console.error(err);
     if (user.validPassword(info.ret_pw1)) {
+      response.render('./profile.html', {"root": __dirname});
       console.log("password matches");
     } else {
+      response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
       console.log("password doesnt match");
     }
+  }
   });
 }
