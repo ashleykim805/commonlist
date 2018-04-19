@@ -2,16 +2,27 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Commonlist </title>
+  <title>Commonlist Profile </title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
   
-  <div id="title"><img src="./assorted/commonlist4pt.png" /></div>
-  
-  	<a href="/spotify_import" class="btn-spotify">Import Spotify Data</a>
-    </div> 
+      	<div id="login_link"><h2><a href="/logout">Logout</a> &nbsp;&nbsp;&nbsp;&nbsp;</div>
+
+  		<div id="title"><img src="./assorted/commonlist4pt.png" /></div>
+
+	  	<div id="welcome"><h2>Welcome to Commonlist, {{User}}! We're happy you're here. <br><br>
+	  	If it's your first time, import your spotify data using this link:</h2>
+	  	<a href="/spotify_import" class="btn-spotify">Import Spotify Data</a><br>
+	  	<h2>If not, search to find a friend and combine your music tastes!</h2>
+
+
+	  	<!--TODO: PUT SEARCH FUNCTION HERE -->
+
+
+	  	</div>
+   </div> 
   <div id="swirly"><img src="./assorted/album-sine-wave.jpg" id="swirly_image" /></div>
   
   </body>

@@ -7,21 +7,25 @@
   <script type="text/javascript" src="mustache.js" ></script>
 </head>
 <body>
-  <div class="alert">
-    <h3 style="color:orangered">{{alert}}</h3>
-  </div>
+  
   <div class="container">
+    <div class="alert">
+      <h3 style="color:orangered">{{alert}}</h3>
+    </div>
     <div id="login_link"><h2><a href="/login">Login</a> &nbsp;&nbsp;&nbsp;&nbsp;  <a href="/register">Sign Up</a></div>
     <div id="title"><a href="/"><img src="./assorted/commonlist4pt.png" /></a></div>
     <div id="user_inputs">
-      <h2>Welcome back! Please sign in:</h2>
-      <form method="post" action="/returning_profile">
-        Username: <input type="text" name="user"> <br>
-        Password: <input type="password" name="ret_pw1"> <br>
-        <button type="submit"> Log In </button>
+      <h2>Welcome! Create an account:</h2>
+      <form method="post" action="/new_profile">
+        Email: <input type="text" name="new_email"> <br>
+        Username: <input type="text" name="new_user"> <br>
+        Password: <input type="password" name="new_pw1"> <br>
+        Confirm Password: <input type="password" name="new_pw2"> <br>
+        <button type="submit"> Sign Up </button>
       </form>
 
-      <h2><span id="already_registered">(Not registered? Sign Up <a href="/register">here)</a></span></h2>
+
+      <h2><span id="already_registered">(Already a user? Log In <a href="/login">here)</a></span></h2>
     </div>
   </div>
   <div id="swirly"><img src="./assorted/album-sine-wave.jpg" id="swirly_image" /></div>

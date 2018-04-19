@@ -6,6 +6,22 @@ body {
       font-style: normal;
       font-weight: 200;
     }
+
+h2 {
+  font-weight: 100;
+  font-family: basic-sans, sans-serif;
+}
+
+a {
+  text-decoration: none;
+  font-style: normal;
+  font-weight: 200;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: underline;
+}
     
     .container {
       width: 1000px;
@@ -13,19 +29,41 @@ body {
     }
     
     #title img{
-      width: 600px;
+      width: 450px;
       padding: 50px;
     }
+
     #subtitle{
       font-family: basic-sans, sans-serif;
       transform: skew(-6deg);
       font-weight: 900;
       text-transform: Uppercase;
-      font-size: 45px;
+      font-size: 55px;
       margin-left: 50px;
       width: 700px;
       margin-top: -20px;
+    }
 
+    #login_link{
+      margin-left: 780px;
+      position: fixed;
+      margin-top: 52px;
+      font-size: 14px;
+      opacity: .6;
+    }
+
+    #login_link a {
+      font-weight: 100;
+      font-family: basic-sans, sans-serif;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    #login_link a:hover {
+      font-weight: 100;
+      font-family: basic-sans, sans-serif;
+      color: #fff;
+      text-decoration: underline;
     }
     
     #butt {
@@ -37,6 +75,11 @@ body {
       border-radius: 20px;
       margin-left: 50px;
       margin-top: 20px;
+      width: 200px;
+    }
+
+    #butt:hover {
+      background-color: white;
     }
 
     .btn-spotify {
@@ -44,8 +87,7 @@ body {
 	    background-color: #1DB954;
 	    color: white;
 	    border-radius: 20px;
-	    margin-left: 50px;
-	    margin-top: 20px;
+	    margin-top: -10px;
 	    padding: 10px;
 	    text-decoration: none;
 	    display: inline-block;
@@ -55,3 +97,46 @@ body {
       width: 100vw;
       position: fixed;
     }
+
+    #user_inputs {
+      margin-left: 70px;
+    }
+
+    #user_inputs input {
+      border: none;
+      background: black;
+      border-bottom: 1px dashed #FFFFFF;
+      margin-bottom: 10px;
+      width: 140px;
+      color: #FFF;
+    }
+
+    #user_inputs button {
+      font-family: basic-sans, sans-serif;
+      font-size: 15px;
+      border: 1px solid white;
+      background-color: black;
+      color: white;
+      border-radius: 20px;
+      margin-top: 10px;
+      width: 100px;
+    }
+
+    #user_inputs button:hover {
+      background-color: white;
+    }
+    
+    #already_registered {
+      opacity: .7;
+      font-size: 18px;
+    }
+
+    #error{
+      margin-left: 50px;
+    }
+
+    #welcome{
+      margin-left: 50px;
+    }
+
+

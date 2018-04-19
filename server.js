@@ -123,10 +123,15 @@ app.get('/login', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   response.render('./login.html', {"root": __dirname});
 });
+//register page
+app.get('/register', function(request, response){
+  console.log('-- Request received:', request.method, request.url);
+  response.render('./register.html', {"root": __dirname});
+});
 //profile page
 app.post('/new_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
-  //TODO - save form data in database
+  //TODO - verify user input and sanitize 
   saveUser(request);
   response.sendFile('./profile.html', {"root": __dirname});
 });
@@ -136,6 +141,16 @@ app.post('/returning_profile', function(request, response){
   //var request = request.body;
   //TODO - access their data + validate w/ database
   authenticateUser(request, response);
+});
+//already logged in/access profile page directly: go back to profile page or tell them not authorized:
+app.get('/profile', function(request, response){
+  console.log('-- Request received:', request.method, request.url);
+  if(loggedIn){
+    response.render('./profile.html', {"root": __dirname, "User":userID});
+  }
+  else{
+    response.sendFile('./error.html', {"root": __dirname});
+  }
 });
 //importing spotify data:
 app.get('/spotify_import', function(request, response){
@@ -241,6 +256,7 @@ app.get('/import_playlists', function(request, response){
 app.get('/logout', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   response.status(200).type('html');
+  loggedIn = false; //global auth variable (now logged out)
   response.redirect('/login');
 });
 
@@ -260,7 +276,7 @@ app.get('/styles.css', function(request, response){
 //404!
 app.get('*', function(request, response){
   console.log('-- Request received: 404');
-  response.status(404).send('404: Whoops! Cannot find that page.')
+  response.sendFile('./error.html', {"root": __dirname});
 });
 
 
@@ -292,7 +308,10 @@ function authenticateUser(request, response) {
     } else {
     if (err) return console.error(err);
     if (user.validPassword(info.ret_pw1)) {
-      response.render('./profile.html', {"root": __dirname});
+      userID = info.user;
+      console.log(userID);
+      loggedIn = true; //global auth variable
+      response.render('./profile.html', {"root": __dirname, "User":userID});
       console.log("password matches");
     } else {
       response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
