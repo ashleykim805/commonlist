@@ -69,7 +69,7 @@ var userSchema = new mongoose.Schema({
   image: String,
   hash: String,
   salt: String,
-  trackInfo: [{id: String, dance: Number, loud: Number, instrum: Number}]
+  trackInfo: [{name: String, album: String, artist: String, id: String, dance: Number, loud: Number, instrum: Number}]
 });
 
 // hashes the pw
@@ -134,7 +134,7 @@ app.post('/new_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //TODO - verify user input and sanitize
   saveUser(request);
-  response.sendFile('./profile.html', {"root": __dirname});
+  response.render('./profile.html', {"root": __dirname});
 });
 //profile page
 app.post('/returning_profile', function(request, response){
@@ -148,6 +148,7 @@ app.get('/profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   if(loggedIn){
     response.render('./profile.html', {"root": __dirname, "User":userID});
+    getUserPlaylists(userID);
   }
   else{
     response.sendFile('./error.html', {"root": __dirname});
@@ -243,9 +244,14 @@ app.get('/import_playlists', function(request, response){
   .then(function(data) {
     var songInfo = [];
     for(let i = 0; i < data.body.items.length; i++){
+      // song.name = data.body.items[i].track.name;
 	spotifyApi.getAudioFeaturesForTrack(data.body.items[i].track.id)
 	.then(function(data1) {
         var song = {};
+        song.album = data.body.items[i].track.album.name;
+        song.name = data.body.items[i].track.name;
+        song.artist = data.body.items[i].track.album.artists[0].name;
+        console.log(data.body.items[i].track.album.artists[0].name);
         song.id =  data.body.items[i].track.id;
          song.dance = data1.body.danceability;
          song.loud = data1.body.loudness;
