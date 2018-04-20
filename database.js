@@ -64,3 +64,14 @@ userSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 var User = mongoose.model('User', userSchema);
 
 // end mongoDB stuff
+
+function makeUser(username, email) {
+  var user = new User({
+    username: username,
+    email: email
+  });
+  return user;
+}
+
+exports.User = User;
+exports.makeUser = makeUser;
