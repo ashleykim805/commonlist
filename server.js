@@ -145,12 +145,14 @@ app.get('/callback', function(request, response){
 
         // use the access token to access the Spotify Web API
         request_library.get(options, function(error, response, body) {
-          console.log(body);
+          console.log('weeee' + JSON.stringify(body));
+          spotifyID = body.id;
+          console.log("set spotify ID to " +spotifyID);
         });
         console.log('access_token is ' + access_token);
         global_access_token = access_token;
         spotifyApi.setAccessToken(access_token);
-        spotifyID = body.id;
+
       }
     });
   }
@@ -198,7 +200,7 @@ app.get('/import_playlists', function(request, response){
          songInfo.push(song);
          if(songInfo.length===data.body.items.length - 1){
            console.log("YEEEEEET");
-           User.findOneAndUpdate({"username": userID}, { "$addToSet": { "trackInfo": { "$each": songInfo } }}, function(err, doc){
+           db.User.findOneAndUpdate({"username": userID}, { "$addToSet": { "trackInfo": { "$each": songInfo } }}, function(err, doc){
              if(err){
                console.error(err);
              }
@@ -272,7 +274,8 @@ app.get('/spotify_export', function(request, response){
 
 function exportPlaylist() {
   var toExport = ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"];
-  spotifyApi.createPlaylist(spotifyID, ('Test Playlist ' + Math.random()), { 'public' : true })
+  console.log(spotifyID);
+  spotifyApi.createPlaylist(spotifyID, ('Test Playlist ' + Math.random()), { 'public' : false })
   .then(function(data) {
     spotifyApi.addTracksToPlaylist(spotifyID, data.body.id, toExport)
     .then(function(data) {
@@ -311,18 +314,6 @@ function getUserPlaylists(id, callback) {
         console.log("returning object");
         //console.log('object: ' + obj);
         var tracks = obj.trackInfo;
-        var toExport = ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"];
-        spotifyApi.createPlaylist(spotifyID, ('Test Playlist ' + Math.random()), { 'public' : true })
-        .then(function(data) {
-          spotifyApi.addTracksToPlaylist(spotifyID, data.body.id, toExport)
-          .then(function(data) {
-            console.log('Added tracks to playlist!');
-          }, function(err) {
-            console.log('Something went wrong!', err);
-          });
-        }, function(err) {
-          console.log('Something went wrong!', err);
-        });
         callback(tracks);
       }
     }
