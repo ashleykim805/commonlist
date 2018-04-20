@@ -7,6 +7,7 @@ var querystring = require('querystring');
 var request_library = require('request'); // "Request" library
 
 var session = require('./sessionmanager.js');
+var db = require('./database.js');
 
 //SPOTIFY AUTH:
 var SpotifyWebApi = require('spotify-web-api-node');
@@ -264,7 +265,7 @@ app.listen(8080, function(){
 });
 
 function getUserPlaylists(id) {
-  var query = User.findOne({username: id}, function(err, obj) {
+  var query = db.User.findOne({username: id}, function(err, obj) {
     //console.log(query);
     if (err===null){
       return false;
@@ -274,30 +275,5 @@ function getUserPlaylists(id) {
       var tracks = obj.trackInfo;
       return tracks;
     }
-
-
-
-  });
-}
-
-function authenticateUser(request, response) {
-  var info = request.body;
-  User.findOne({username:info.user}, function (err, user) {
-    if (user === null) {
-      response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
-      console.log("password doesnt match");
-    } else {
-    if (err) return console.error(err);
-    if (user.validPassword(info.ret_pw1)) {
-      userID = info.user;
-      console.log(userID);
-      loggedIn = true; //global auth variable
-      response.render('./profile.html', {"root": __dirname, "User":userID});
-      console.log("password matches");
-    } else {
-      response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
-      console.log("password doesnt match");
-    }
-  }
   });
 }
