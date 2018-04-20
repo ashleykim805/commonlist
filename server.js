@@ -6,6 +6,9 @@ var handlebars  = require('express-handlebars');
 var querystring = require('querystring');
 var request_library = require('request'); // "Request" library
 
+var session = require('./sessionmanager.js');
+var db = require('./database.js');
+
 //SPOTIFY AUTH:
 var SpotifyWebApi = require('spotify-web-api-node');
 var clientID = '58ac68b2b95c4c55957c2a54c8f1ed90';
@@ -42,73 +45,6 @@ app.use(express.static(__dirname)); // directory
 //and handlebars display based on express-handlebars docs
 //link: https://github.com/ericf/express-handlebars
 
-// mongoDB stuff
-// https://thinkster.io/tutorials/node-json-api/creating-the-user-model
-var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
-var crypto = require('crypto');
-var jwt = require('jsonwebtoken');
-var db = mongoose.connection;
-
-db.on('error', console.error); // log any errors that occur
-db.once('open', function() { // bind a function to perform when database has been opened
-  console.log("Connected to DB"); // perform any queries here
-});
-
-process.on('SIGINT', function(){
-  console.log('DB connnection closed by Node process ending');
-  process.exit(0);
-});
-
-mongoose.connect('mongodb://commonlist_admin:brunonian18@ds141889.mlab.com:41889/commonlist');
-
-//var secret = require('../config').secret;
-var userSchema = new mongoose.Schema({
-  username: {type:String, lowercase:true, unique:true, required:[true, "can't be blank"], match:[/^[a-zA-Z0-9]+$/, 'is invalid'], index:true},
-  email: {type:String, lowercase:true, unique:true, required:[true, "can't be blank"], match:[/\S+@\S+\.\S+/,'is invalid'], index:true},
-  image: String,
-  hash: String,
-  salt: String,
-  trackInfo: [{id: String, dance: Number, loud: Number, instrum: Number}]
-});
-
-// hashes the pw
-userSchema.methods.setPassword = function(password){
-  this.salt = crypto.randomBytes(16).toString('hex');
-  this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
-};
-// validates the pw
-userSchema.methods.validPassword = function(password) {
-  var hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
-  return this.hash === hash;
-};
-// make a method on user model that makes a JWT
-userSchema.methods.generateJWT = function() {
-  var today = new Date();
-  var exp = new Date(today);
-  exp.setDate(today.getDate() + 60);
-
-  return jwt.sign({
-    id: this._id,
-    username: this.username,
-    exp: parseInt(exp.getTime() / 1000),
-  }, secret);
-};
-// gets JSON object of user to front end for authentication
-userSchema.methods.toAuthJSON = function(){
-  return {
-    username: this.username,
-    email: this.email,
-    token: this.generateJWT(),
-    image: this.image
-  };
-};
-userSchema.plugin(uniqueValidator, {message: 'is already taken.'});
-// register schema w/ mongoose
-var User = mongoose.model('User', userSchema);
-
-// end mongoDB stuff
-
 //redirect to login page upon load
 app.get('/', function(request, response){
   console.log('-- Request received:', request.method, request.url);
@@ -133,16 +69,16 @@ app.get('/register', function(request, response){
 app.post('/new_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //TODO - verify user input and sanitize
-  saveUser(request);
 
-  //response.sendFile('./profile.html', {"root": __dirname});
+  session.saveUser(request, response);
+
 });
 //profile page
 app.post('/returning_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //var request = request.body;
   //TODO - access their data + validate w/ database
-  authenticateUser(request, response);
+  session.authenticateUser(request, response);
 });
 //already logged in/access profile page directly: go back to profile page or tell them not authorized:
 app.get('/profile', function(request, response){
@@ -329,33 +265,13 @@ app.listen(8080, function(){
   console.log('-- Server listening on port 8080');
 });
 
-function saveUser(request) {
-  var info = request.body;
-  var user = new User({
-    username: info.new_user,
-    email: info.new_email,
-  });
-  user.setPassword(info.new_pw1);
-  // user.generateJWT(); -> returns a jwt
-  // user.toAuthJSON(); -> returns a JSON representation
-  user.save(function(err, data) {
-    if (err) return console.error(err);
-    //console.log(data);
-  });
-
-  userID = info.new_user;
-  console.log(userID);
-  loggedIn = true; //global auth variable
-  response.render('./profile.html', {"root": __dirname, "User":userID});
-
-}
-
 function getUserPlaylists(id) {
-  var query = User.findOne({username: id}, function(err, obj) {
+  var query = db.User.findOne({username: id}, function(err, obj) {
+
     //console.log(query);
     if (err===null){
       return false;
-    } 
+    }
     else {
       console.log(obj);
       var tracks = obj.trackInfo;
@@ -364,27 +280,5 @@ function getUserPlaylists(id) {
 
 
 
-  });
-}
-
-function authenticateUser(request, response) {
-  var info = request.body;
-  User.findOne({username:info.user}, function (err, user) {
-    if (user === null) {
-      response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
-      console.log("password doesnt match");
-    } else {
-    if (err) return console.error(err);
-    if (user.validPassword(info.ret_pw1)) {
-      userID = info.user;
-      console.log(userID);
-      loggedIn = true; //global auth variable
-      response.render('./profile.html', {"root": __dirname, "User":userID});
-      console.log("password matches");
-    } else {
-      response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
-      console.log("password doesnt match");
-    }
-  }
   });
 }
