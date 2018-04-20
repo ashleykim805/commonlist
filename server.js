@@ -24,6 +24,7 @@ var loggedIn = false;
 var userID = '';
 var spotifyID = '';
 var global_access_token = '';
+var search_user_global = '';
 
 //to get GET/POST requests
 app.use(bodyParser.json()); // for parsing application/json
@@ -87,7 +88,7 @@ app.get('/profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   if(loggedIn){
     response.render('./profile.html', {"root": __dirname, "User":userID});
-    getUserPlaylists(userID);
+    //getUserPlaylists(userID);
   }
   else{
     response.sendFile('./error.html', {"root": __dirname});
@@ -200,6 +201,7 @@ app.get('/import_playlists', function(request, response){
          songInfo.push(song);
          if(songInfo.length===data.body.items.length - 1){
            console.log("YEEEEEET");
+           console.log(userID);
            db.User.findOneAndUpdate({"username": userID}, { "$addToSet": { "trackInfo": { "$each": songInfo } }}, function(err, doc){
              if(err){
                console.error(err);
@@ -240,6 +242,7 @@ app.get('/search', function(request, response){
     else {
       console.log("FOUND USER");
       response.render('./export.html', {"root": __dirname, "Message":"Search Success! Combining your music tastes with user ", "User":search_user, "Tracks":vals});
+      search_user_global = search_user;
     }
   });
 //  response.redirect('/profile');
@@ -268,14 +271,35 @@ app.get('/styles.css', function(request, response){
 
 app.get('/spotify_export', function(request, response){
   console.log('-- Request received: export playlist');
-  exportPlaylist();
+  exportPlaylist(search_user_global);
+  response.render('./profile.html', {"root": __dirname, "User":userID, "Message":"Playlist successfully exported! Check spotify."});
 });
 
 
-function exportPlaylist() {
-  var toExport = ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"];
-  console.log(spotifyID);
-  spotifyApi.createPlaylist(spotifyID, ('Test Playlist ' + Math.random()), { 'public' : false })
+function exportPlaylist(id) {
+
+  //SAMPLE PLAYLIST FROM USER SEARCHED FOR
+
+  var toExport = [];
+  console.log(id);
+  var query = db.User.findOne({username: id}, function(err, obj) {
+    if (obj === null) {
+      console.log("Could not find user");
+      return;
+    } else {
+      //for (let track_id in obj.trackInfo) {
+      //  console.log(track_id);
+      //  console.log(track_id.id);
+        //return;
+      //}
+      for(let i=0; i<obj.trackInfo.length; i++){
+        toExport.push('spotify:track:' + obj.trackInfo[i].id);
+      }
+      console.log(toExport);
+    }
+    //return;
+
+  spotifyApi.createPlaylist(spotifyID, ('Commonlist Playlist ' + Math.floor(Math.random() * (10000 - 3000 + 1)) + 3000), { 'public' : false })
   .then(function(data) {
     spotifyApi.addTracksToPlaylist(spotifyID, data.body.id, toExport)
     .then(function(data) {
@@ -286,7 +310,14 @@ function exportPlaylist() {
   }, function(err) {
     console.log('Something went wrong!', err);
   });
+
+});
+
+  return;
+
 }
+
+
 
 //404!
 app.get('*', function(request, response){
