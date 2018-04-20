@@ -136,8 +136,9 @@ app.get('/register', function(request, response){
 app.post('/new_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //TODO - verify user input and sanitize
+
   session.saveUser(request, response);
-  //response.sendFile('./profile.html', {"root": __dirname});
+
 });
 //profile page
 app.post('/returning_profile', function(request, response){
@@ -339,7 +340,6 @@ app.listen(8080, function(){
 
 function getUserPlaylists(id) {
   var query = db.User.findOne({username: id}, function(err, obj) {
-    //console.log(query);
     if (err===null){
       return false;
     }
@@ -348,5 +348,6 @@ function getUserPlaylists(id) {
       var tracks = obj.trackInfo;
       return tracks;
     }
+    
   });
 }
