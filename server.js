@@ -237,7 +237,7 @@ app.get('/search', function(request, response){
     }
     else {
       console.log("FOUND USER");
-      response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
+      response.render('./export.html', {"root": __dirname, "Message":"Search Success! Combining your music tastes with user ", "User":search_user, "Tracks":vals});
     }
   });
 //  response.redirect('/profile');
@@ -279,15 +279,15 @@ function getUserPlaylists(id, callback) {
   console.log(id);
   var query = db.User.findOne({username: id}, function(err, obj) {
     if (obj === null) {
-      console.log("returning flase");
+      console.log("returning false");
       callback(false);
     } else {
       if (err) {
         console.error(err);
-        console.log("returning flase");
+        console.log("returning false");
         callback(false);
       } else {
-        console.log("returning objext");
+        console.log("returning object");
         //console.log('object: ' + obj);
         var tracks = obj.trackInfo;
         var toExport = ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"];
@@ -306,24 +306,7 @@ function getUserPlaylists(id, callback) {
       }
     }
 
-    // if (err==null){
-    //   return false;
-    // }
-    // else {
-    //   console.log(obj);
-    //   var tracks = obj.trackInfo;
-    //   return tracks;
-    // }
-    if (err===null){
-      console.log("could not find user");
-      return false;
-    }
-    else {
-      console.log("success finding user:");
-      console.log(obj);
-      var tracks = obj.trackInfo;
-      return tracks;
-    }
+    return;
 
   });
 }
