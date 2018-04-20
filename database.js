@@ -25,7 +25,7 @@ var userSchema = new mongoose.Schema({
   image: String,
   hash: String,
   salt: String,
-  trackInfo: [{id: String, dance: Number, loud: Number, instrum: Number}]
+  trackInfo: [{name: String, album: String, artist: String, id: String, dance: Number, loud: Number, instrum: Number}]
 });
 
 // hashes the pw
@@ -64,14 +64,3 @@ userSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 var User = mongoose.model('User', userSchema);
 
 // end mongoDB stuff
-
-function makeUser(username, email) {
-  var user = new User({
-    username: username,
-    email: email
-  });
-  return user;
-}
-
-exports.User = User;
-exports.makeUser = makeUser;
