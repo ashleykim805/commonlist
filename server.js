@@ -68,7 +68,8 @@ var userSchema = new mongoose.Schema({
   email: {type:String, lowercase:true, unique:true, required:[true, "can't be blank"], match:[/\S+@\S+\.\S+/,'is invalid'], index:true},
   image: String,
   hash: String,
-  salt: String
+  salt: String,
+  trackInfo: [{id: String, dance: Number, loud: Number, instrum: Number}]
 });
 
 // hashes the pw
@@ -131,7 +132,7 @@ app.get('/register', function(request, response){
 //profile page
 app.post('/new_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
-  //TODO - verify user input and sanitize 
+  //TODO - verify user input and sanitize
   saveUser(request);
   response.sendFile('./profile.html', {"root": __dirname});
 });
@@ -155,7 +156,7 @@ app.get('/profile', function(request, response){
 //importing spotify data:
 app.get('/spotify_import', function(request, response){
   console.log('-- Request received: spotify import');
-  var scope = 'user-read-private user-read-email';
+  var scope = 'user-read-private user-read-email user-library-read';
   response.redirect('https://accounts.spotify.com/authorize?' +
   querystring.stringify({
     response_type: 'code',
@@ -235,11 +236,38 @@ app.get('/import_playlists', function(request, response){
   // },function(err) {
   //   console.log('Something went wrong!', err);
   // });
-  spotifyApi.getMySavedTracks(spotifyID)
+
+  spotifyApi.getMySavedTracks({
+    limit : 50
+  })
   .then(function(data) {
-    console.log(data);
-    console.log('Retrieved playlists', data.body);
-  },function(err) {
+    var songInfo = [];
+    for(let i = 0; i < data.body.items.length; i++){
+	spotifyApi.getAudioFeaturesForTrack(data.body.items[i].track.id)
+	.then(function(data1) {
+        var song = {};
+        song.id =  data.body.items[i].track.id;
+         song.dance = data1.body.danceability;
+         song.loud = data1.body.loudness;
+         song.instrum = data1.body.instrumentalness;
+         songInfo.push(song);
+         if(songInfo.length===data.body.items.length - 1){
+           console.log("YEEEEEET");
+           User.findOneAndUpdate({"username": userID}, { "$addToSet": { "trackInfo": { "$each": songInfo } }}, function(err, doc){
+             if(err){
+               console.error(err);
+             }
+             console.log(doc);
+           });
+           // { "$addToSet": { "trackInfo": { "$each": songInfo } }});
+           // console.log(JSON.stringify?)
+         }
+   	 }, function(err) {
+      	console.error(err);
+   	 });
+    }
+
+  }, function(err) {
     console.log('Something went wrong!', err);
   });
 
@@ -296,6 +324,15 @@ function saveUser(request) {
   user.save(function(err, data) {
     if (err) return console.error(err);
     //console.log(data);
+  });
+}
+
+function getUserPlaylists(id) {
+  var query = User.findOne({username: id}, function(err, obj) {
+    if (err) console.error(err);
+    console.log(obj);
+    var tracks = obj.trackInfo;
+    // TODO algorithm and export
   });
 }
 
