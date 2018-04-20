@@ -12,17 +12,12 @@
 
   		<div id="title"><img src="./assorted/commonlist4pt.png" /></div>
 
-	  	<div id="welcome"><h2>Welcome to Commonlist, {{User}}! We're happy you're here. <br><br>
-	  	If it's your first time, import your spotify data using this link:</h2>
-	  	<a href="/spotify_import" class="btn-spotify">Import Spotify Data</a><br>
-	  	<h2>If not, search to find a friend and combine your music tastes!</h2>
-	  	<br><br>
-	  	{{Message}}
+	  	<div id="welcome"><h2>{{Message}}</h2> <br><br>
+		<div id="tracks">{{Tracks}}</div>
 
-		<form class="search_users" action="/search" method="GET">
-	  		<input type="text" name="user" placeholder="Search.." />
-	  		<input type="submit" />
-	  	</form>
+
+		<a href="/spotify_export" class="btn-spotify">Export to Spotify</a><br>
+
 
 
 	  	<!--TODO: PUT SEARCH FUNCTION HERE -->

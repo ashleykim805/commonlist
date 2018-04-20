@@ -275,10 +275,26 @@ app.get('/import_playlists', function(request, response){
 
   //TODO : STORE PLAYLIST DATA / SONG DATA IN DATABASE
 
-  response.redirect('/import');
+  response.render('./profile.html', {"root": __dirname, "User":userID, "Message":"Import success! Now search to find your friend's songs and combine your music tastes."});
 
 });
 
+
+//search for users
+app.get('/search', function(request, response){
+  console.log('-- Request received:', request.method, request.url);
+  var search_user = request.query.user;
+  var vals = getUserPlaylists(search_user);
+  if (vals===false){
+    response.render('./export.html', {"root": __dirname, "Message":"Search Failed", "Tracks":err});
+
+  }
+  else {
+    response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
+  }
+//  response.redirect('/profile');
+
+});
 
 //logout redirect to login
 app.get('/logout', function(request, response){
@@ -329,10 +345,18 @@ function saveUser(request) {
 
 function getUserPlaylists(id) {
   var query = User.findOne({username: id}, function(err, obj) {
-    if (err) console.error(err);
-    console.log(obj);
-    var tracks = obj.trackInfo;
-    // TODO algorithm and export
+    //console.log(query);
+    if (err===null){
+      return false;
+    } 
+    else {
+      console.log(obj);
+      var tracks = obj.trackInfo;
+      return tracks;
+    }
+
+
+
   });
 }
 
