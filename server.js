@@ -96,7 +96,7 @@ app.get('/profile', function(request, response){
 //importing spotify data:
 app.get('/spotify_import', function(request, response){
   console.log('-- Request received: spotify import');
-  var scope = 'user-read-private user-read-email user-library-read';
+  var scope = 'user-read-private user-read-email user-library-read playlist-modify-public playlist-modify-private';
   response.redirect('https://accounts.spotify.com/authorize?' +
   querystring.stringify({
     response_type: 'code',
@@ -263,6 +263,27 @@ app.get('/styles.css', function(request, response){
   response.sendFile('./styles.css', {"root": __dirname});
 });
 
+
+app.get('/spotify_export', function(request, response){
+  console.log('-- Request received: export playlist');
+  exportPlaylist();
+});
+
+
+function exportPlaylist() {
+  var toExport = ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"];
+  spotifyApi.createPlaylist(spotifyID, ('Test Playlist ' + Math.random()), { 'public' : true })
+  .then(function(data) {
+    spotifyApi.addTracksToPlaylist(spotifyID, data.body.id, toExport)
+    .then(function(data) {
+      console.log('Added tracks to playlist!');
+    }, function(err) {
+      console.log('Something went wrong!', err);
+    });
+  }, function(err) {
+    console.log('Something went wrong!', err);
+  });
+}
 
 //404!
 app.get('*', function(request, response){
