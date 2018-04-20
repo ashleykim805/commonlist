@@ -228,7 +228,6 @@ app.get('/import_playlists', function(request, response){
 // search for users
 app.get('/search', function(request, response){
   console.log('-- Request received:', request.method, request.url);
-<<<<<<< HEAD
   var search_user = request.query.user; // the user that we are looking for
   getUserPlaylists(search_user, function(vals) {
     console.log(vals)
@@ -241,18 +240,6 @@ app.get('/search', function(request, response){
       response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
     }
   });
-
-=======
-  var search_user = request.query.user;
-  var vals = getUserPlaylists(search_user);
-  if (!vals){
-    response.render('./export.html', {"root": __dirname, "Message":"Search Failed.", "Tracks":vals});
-  }
-  else {
-    //TODO: run algorithm
-    response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
-  }
->>>>>>> 1ed1b682c14e8345a83849f19339f08a183b532d
 //  response.redirect('/profile');
 });
 
@@ -291,7 +278,6 @@ app.listen(8080, function(){
 function getUserPlaylists(id, callback) {
   console.log(id);
   var query = db.User.findOne({username: id}, function(err, obj) {
-<<<<<<< HEAD
     if (obj === null) {
       console.log("returning flase");
       callback(false);
@@ -304,6 +290,18 @@ function getUserPlaylists(id, callback) {
         console.log("returning objext");
         //console.log('object: ' + obj);
         var tracks = obj.trackInfo;
+        var toExport = ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"];
+        spotifyApi.createPlaylist(spotifyID, ('Test Playlist ' + Math.random()), { 'public' : true })
+        .then(function(data) {
+          spotifyApi.addTracksToPlaylist(spotifyID, data.body.id, toExport)
+          .then(function(data) {
+            console.log('Added tracks to playlist!');
+          }, function(err) {
+            console.log('Something went wrong!', err);
+          });
+        }, function(err) {
+          console.log('Something went wrong!', err);
+        });
         callback(tracks);
       }
     }
@@ -316,7 +314,6 @@ function getUserPlaylists(id, callback) {
     //   var tracks = obj.trackInfo;
     //   return tracks;
     // }
-=======
     if (err===null){
       console.log("could not find user");
       return false;
@@ -328,6 +325,5 @@ function getUserPlaylists(id, callback) {
       return tracks;
     }
 
->>>>>>> 1ed1b682c14e8345a83849f19339f08a183b532d
   });
 }
