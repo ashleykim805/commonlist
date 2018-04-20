@@ -6,6 +6,9 @@ var handlebars  = require('express-handlebars');
 var querystring = require('querystring');
 var request_library = require('request'); // "Request" library
 
+var session = require('./sessionmanager.js');
+var db = require('./database.js');
+
 //SPOTIFY AUTH:
 var SpotifyWebApi = require('spotify-web-api-node');
 var clientID = '58ac68b2b95c4c55957c2a54c8f1ed90';
@@ -133,15 +136,15 @@ app.get('/register', function(request, response){
 app.post('/new_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //TODO - verify user input and sanitize
-  saveUser(request);
-  response.render('./profile.html', {"root": __dirname});
+  session.saveUser(request, response);
+  //response.sendFile('./profile.html', {"root": __dirname});
 });
 //profile page
 app.post('/returning_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //var request = request.body;
   //TODO - access their data + validate w/ database
-  authenticateUser(request, response);
+  session.authenticateUser(request, response);
 });
 //already logged in/access profile page directly: go back to profile page or tell them not authorized:
 app.get('/profile', function(request, response){
@@ -281,10 +284,26 @@ app.get('/import_playlists', function(request, response){
 
   //TODO : STORE PLAYLIST DATA / SONG DATA IN DATABASE
 
-  response.redirect('/import');
+  response.render('./profile.html', {"root": __dirname, "User":userID, "Message":"Import success! Now search to find your friend's songs and combine your music tastes."});
 
 });
 
+
+//search for users
+app.get('/search', function(request, response){
+  console.log('-- Request received:', request.method, request.url);
+  var search_user = request.query.user;
+  var vals = getUserPlaylists(search_user);
+  if (vals===false){
+    response.render('./export.html', {"root": __dirname, "Message":"Search Failed", "Tracks":err});
+
+  }
+  else {
+    response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
+  }
+//  response.redirect('/profile');
+
+});
 
 //logout redirect to login
 app.get('/logout', function(request, response){
@@ -318,48 +337,16 @@ app.listen(8080, function(){
   console.log('-- Server listening on port 8080');
 });
 
-function saveUser(request) {
-  var info = request.body;
-  var user = new User({
-    username: info.new_user,
-    email: info.new_email,
-  });
-  user.setPassword(info.new_pw1);
-  // user.generateJWT(); -> returns a jwt
-  // user.toAuthJSON(); -> returns a JSON representation
-  user.save(function(err, data) {
-    if (err) return console.error(err);
-    //console.log(data);
-  });
-}
-
 function getUserPlaylists(id) {
-  var query = User.findOne({username: id}, function(err, obj) {
-    if (err) console.error(err);
-    console.log(obj);
-    var tracks = obj.trackInfo;
-    // TODO algorithm and export
-  });
-}
-
-function authenticateUser(request, response) {
-  var info = request.body;
-  User.findOne({username:info.user}, function (err, user) {
-    if (user === null) {
-      response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
-      console.log("password doesnt match");
-    } else {
-    if (err) return console.error(err);
-    if (user.validPassword(info.ret_pw1)) {
-      userID = info.user;
-      console.log(userID);
-      loggedIn = true; //global auth variable
-      response.render('./profile.html', {"root": __dirname, "User":userID});
-      console.log("password matches");
-    } else {
-      response.render('./login.html', {"root": __dirname, "alert":"Username or password do not match"});
-      console.log("password doesnt match");
+  var query = db.User.findOne({username: id}, function(err, obj) {
+    //console.log(query);
+    if (err===null){
+      return false;
     }
-  }
+    else {
+      console.log(obj);
+      var tracks = obj.trackInfo;
+      return tracks;
+    }
   });
 }
