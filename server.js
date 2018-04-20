@@ -134,7 +134,8 @@ app.post('/new_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //TODO - verify user input and sanitize
   saveUser(request);
-  response.sendFile('./profile.html', {"root": __dirname});
+
+  //response.sendFile('./profile.html', {"root": __dirname});
 });
 //profile page
 app.post('/returning_profile', function(request, response){
@@ -341,6 +342,12 @@ function saveUser(request) {
     if (err) return console.error(err);
     //console.log(data);
   });
+
+  userID = info.new_user;
+  console.log(userID);
+  loggedIn = true; //global auth variable
+  response.render('./profile.html', {"root": __dirname, "User":userID});
+
 }
 
 function getUserPlaylists(id) {
