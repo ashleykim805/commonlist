@@ -230,11 +230,11 @@ app.get('/search', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   var search_user = request.query.user;
   var vals = getUserPlaylists(search_user);
-  if (vals===false){
-    response.render('./export.html', {"root": __dirname, "Message":"Search Failed", "Tracks":err});
-
+  if (!vals){
+    response.render('./export.html', {"root": __dirname, "Message":"Search Failed.", "Tracks":vals});
   }
   else {
+    //TODO: run algorithm
     response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
   }
 //  response.redirect('/profile');
@@ -276,9 +276,11 @@ app.listen(8080, function(){
 function getUserPlaylists(id) {
   var query = db.User.findOne({username: id}, function(err, obj) {
     if (err===null){
+      console.log("could not find user");
       return false;
     }
     else {
+      console.log("success finding user:");
       console.log(obj);
       var tracks = obj.trackInfo;
       return tracks;
