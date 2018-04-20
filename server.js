@@ -267,8 +267,6 @@ app.listen(8080, function(){
 
 function getUserPlaylists(id) {
   var query = db.User.findOne({username: id}, function(err, obj) {
-
-    //console.log(query);
     if (err===null){
       return false;
     }
@@ -277,8 +275,6 @@ function getUserPlaylists(id) {
       var tracks = obj.trackInfo;
       return tracks;
     }
-
-
-
+    
   });
 }
