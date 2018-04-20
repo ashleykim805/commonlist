@@ -25,7 +25,7 @@ var userSchema = new mongoose.Schema({
   image: String,
   hash: String,
   salt: String,
-  trackInfo: [{id: String, dance: Number, loud: Number, instrum: Number}]
+  trackInfo: [{name: String, album: String, artist: String, id: String, dance: Number, loud: Number, instrum: Number}]
 });
 
 // hashes the pw

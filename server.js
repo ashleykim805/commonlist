@@ -45,6 +45,8 @@ app.use(express.static(__dirname)); // directory
 //and handlebars display based on express-handlebars docs
 //link: https://github.com/ericf/express-handlebars
 
+
+
 //redirect to login page upon load
 app.get('/', function(request, response){
   console.log('-- Request received:', request.method, request.url);
@@ -69,8 +71,9 @@ app.get('/register', function(request, response){
 app.post('/new_profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   //TODO - verify user input and sanitize
+
   session.saveUser(request, response);
-  //response.sendFile('./profile.html', {"root": __dirname});
+
 });
 //profile page
 app.post('/returning_profile', function(request, response){
@@ -84,6 +87,7 @@ app.get('/profile', function(request, response){
   console.log('-- Request received:', request.method, request.url);
   if(loggedIn){
     response.render('./profile.html', {"root": __dirname, "User":userID});
+    getUserPlaylists(userID);
   }
   else{
     response.sendFile('./error.html', {"root": __dirname});
@@ -179,9 +183,14 @@ app.get('/import_playlists', function(request, response){
   .then(function(data) {
     var songInfo = [];
     for(let i = 0; i < data.body.items.length; i++){
+      // song.name = data.body.items[i].track.name;
 	spotifyApi.getAudioFeaturesForTrack(data.body.items[i].track.id)
 	.then(function(data1) {
         var song = {};
+        song.album = data.body.items[i].track.album.name;
+        song.name = data.body.items[i].track.name;
+        song.artist = data.body.items[i].track.album.artists[0].name;
+        console.log(data.body.items[i].track.album.artists[0].name);
         song.id =  data.body.items[i].track.id;
          song.dance = data1.body.danceability;
          song.loud = data1.body.loudness;
@@ -219,6 +228,7 @@ app.get('/import_playlists', function(request, response){
 // search for users
 app.get('/search', function(request, response){
   console.log('-- Request received:', request.method, request.url);
+<<<<<<< HEAD
   var search_user = request.query.user; // the user that we are looking for
   getUserPlaylists(search_user, function(vals) {
     console.log(vals)
@@ -232,6 +242,17 @@ app.get('/search', function(request, response){
     }
   });
 
+=======
+  var search_user = request.query.user;
+  var vals = getUserPlaylists(search_user);
+  if (!vals){
+    response.render('./export.html', {"root": __dirname, "Message":"Search Failed.", "Tracks":vals});
+  }
+  else {
+    //TODO: run algorithm
+    response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
+  }
+>>>>>>> 1ed1b682c14e8345a83849f19339f08a183b532d
 //  response.redirect('/profile');
 });
 
@@ -270,6 +291,7 @@ app.listen(8080, function(){
 function getUserPlaylists(id, callback) {
   console.log(id);
   var query = db.User.findOne({username: id}, function(err, obj) {
+<<<<<<< HEAD
     if (obj === null) {
       console.log("returning flase");
       callback(false);
@@ -294,5 +316,18 @@ function getUserPlaylists(id, callback) {
     //   var tracks = obj.trackInfo;
     //   return tracks;
     // }
+=======
+    if (err===null){
+      console.log("could not find user");
+      return false;
+    }
+    else {
+      console.log("success finding user:");
+      console.log(obj);
+      var tracks = obj.trackInfo;
+      return tracks;
+    }
+
+>>>>>>> 1ed1b682c14e8345a83849f19339f08a183b532d
   });
 }
