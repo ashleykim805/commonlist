@@ -216,20 +216,23 @@ app.get('/import_playlists', function(request, response){
 });
 
 
-//search for users
+// search for users
 app.get('/search', function(request, response){
   console.log('-- Request received:', request.method, request.url);
-  var search_user = request.query.user;
-  var vals = getUserPlaylists(search_user);
-  if (vals===false){
-    response.render('./export.html', {"root": __dirname, "Message":"Search Failed", "Tracks":err});
+  var search_user = request.query.user; // the user that we are looking for
+  getUserPlaylists(search_user, function(vals) {
+    console.log(vals)
+    if (vals === false) { // if vals is false, the user was not found
+      console.log("CAN'T FIND USER");
+      response.render('./export.html', {"root": __dirname, "Message":"Search Failed"}); // why was err returned as tracks?
+    }
+    else {
+      console.log("FOUND USER");
+      response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
+    }
+  });
 
-  }
-  else {
-    response.render('./export.html', {"root": __dirname, "Message":"Search Success", "Tracks":vals});
-  }
 //  response.redirect('/profile');
-
 });
 
 //logout redirect to login
@@ -264,16 +267,32 @@ app.listen(8080, function(){
   console.log('-- Server listening on port 8080');
 });
 
-function getUserPlaylists(id) {
+function getUserPlaylists(id, callback) {
+  console.log(id);
   var query = db.User.findOne({username: id}, function(err, obj) {
-    //console.log(query);
-    if (err===null){
-      return false;
+    if (obj === null) {
+      console.log("returning flase");
+      callback(false);
+    } else {
+      if (err) {
+        console.error(err);
+        console.log("returning flase");
+        callback(false);
+      } else {
+        console.log("returning objext");
+        //console.log('object: ' + obj);
+        var tracks = obj.trackInfo;
+        callback(tracks);
+      }
     }
-    else {
-      console.log(obj);
-      var tracks = obj.trackInfo;
-      return tracks;
-    }
+
+    // if (err==null){
+    //   return false;
+    // }
+    // else {
+    //   console.log(obj);
+    //   var tracks = obj.trackInfo;
+    //   return tracks;
+    // }
   });
 }

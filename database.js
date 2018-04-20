@@ -62,7 +62,6 @@ userSchema.methods.toAuthJSON = function(){
 userSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 // register schema w/ mongoose
 var User = mongoose.model('User', userSchema);
-
 // end mongoDB stuff
 
 function makeUser(username, email) {
