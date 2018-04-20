@@ -7,13 +7,13 @@ Prototype for Brown CS132 -- runs via Node & express.js
 
 ## running the prototype
 
-clone the project
+clone the project: `git clone https://github.com/abuaita/commonlist.git`
 
-npm install
+run: `npm install`
 
-node server.js
+start it up: `node server.js`
 
-go to localhost:8080 in your favorite brower
+then go to localhost:8080 in your favorite browser
 
 ## core dependencies
     "async": "^2.6.0",
