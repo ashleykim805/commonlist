@@ -29,3 +29,7 @@ then go to localhost:8080 in your favorite browser
     "querystring": "^0.2.0",
     "request": "^2.85.0",
     "spotify-web-api-node": "^2.5.0"
+
+## authors
+
+`@abuaita` `@marshalllerner` `@ashleykim805` `@sethbarshay`
