@@ -56,7 +56,7 @@ app.get('/', function(request, response){
 //home page
 app.get('/home', function(request, response){
   console.log('-- Request received:', request.method, request.url);
-  response.sendFile('./home.html', {"root": __dirname});
+  response.render('./home.html', {"root": __dirname});
 });
 //login page
 app.get('/login', function(request, response){
@@ -166,7 +166,7 @@ app.get('/callback', function(request, response){
 app.get('/import', function(request, response){
   console.log('-- Request received:');
 
-  response.sendFile('./import.html', {"root": __dirname});
+  response.render('./import.html', {"root": __dirname});
 });
 
 app.get('/import_playlists', function(request, response){
@@ -258,7 +258,7 @@ app.get('/logout', function(request, response){
 
 app.get('/error', function(request, response){
   console.log('-- Request received:', request.method, request.url);
-  response.sendFile('./error.html', {"root": __dirname});
+  response.render('./error.html', {"root": __dirname});
 });
 
 
