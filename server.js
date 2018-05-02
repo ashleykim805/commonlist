@@ -1,4 +1,4 @@
-
+const PORT = process.env.PORT || 8080;
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -25,6 +25,10 @@ var userID = '';
 var spotifyID = '';
 var global_access_token = '';
 var search_user_global = '';
+
+app.listen(PORT, function(){
+  console.log('-- Server listening on port 8080');
+});
 
 //to get GET/POST requests
 app.use(bodyParser.json()); // for parsing application/json
@@ -323,11 +327,6 @@ function exportPlaylist(id) {
 app.get('*', function(request, response){
   console.log('-- Request received: 404');
   response.sendFile('./error.html', {"root": __dirname});
-});
-
-
-app.listen(8080, function(){
-  console.log('-- Server listening on port 8080');
 });
 
 function getUserPlaylists(id, callback) {
